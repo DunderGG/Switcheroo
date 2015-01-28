@@ -59,6 +59,7 @@ public class GUI extends JFrame
 	
 	public JTextArea listNrVal;
 	public JTextArea listSizeVal;
+	public JTextArea listPathVal;
 	
 	JLabel lblListInfo;
 	JLabel lblListSize;
@@ -141,7 +142,7 @@ public class GUI extends JFrame
 								    	if(newDir.toString() != null)
 								    	{								    										    	
 								    		fl.updateListData(f);
-								    		fl.updateListInfo();
+								    		fl.updateListInfo(f);
 								    	}
 								    	else
 								    		System.out.println("Folder did not exist");
@@ -345,6 +346,11 @@ public class GUI extends JFrame
 		listSizeVal = new JTextArea("Combined size: " + fl.listTotalSize);
 		listSizeVal.setFont(getFont("TitilliumWeb-Light.ttf", 16f));
 		listDataContainer.add(listSizeVal);
+		
+		//Current working directory
+		listPathVal = new JTextArea("Current directory: " + fl.currentPath);
+		listPathVal.setFont(getFont("TitilliumWeb-Light.ttf", 16f));
+		listDataContainer.add(listPathVal);
 		
 		c.gridy = 3;
 		c.gridx = 0;

@@ -25,6 +25,8 @@ public class FileList
 	public String listTotalSize;
 	public String listNrOfItems;
 	
+	public String currentPath;
+	
 	private GUI gui;
 	
 	public FileList(GUI gui)
@@ -38,8 +40,9 @@ public class FileList
 		
 		/*
 		 * FROM: http://stackoverflow.com/questions/7222161/jlist-that-contains-the-list-of-files-in-a-directory
-		 */		
-		wallFolder = new File("F:\\walls\\Usable\\Landscape");
+		 */
+		currentPath = System.getProperty("user.home")+"\\Pictures";
+		wallFolder = new File(currentPath);
 				
 		final String[] nameArray = wallFolder.list(new TextFileFilter2());
 		
@@ -89,12 +92,14 @@ public class FileList
 		fileList.repaint();
 	}
 	
-	public void updateListInfo()
+	public void updateListInfo(Wallpaper wallFile)
 	{
 		listNrOfItems = Integer.toString(fileList.getModel().getSize());
+		currentPath = wallFile.path;
 		
 		gui.listNrVal.setText("Nr. of files: " + listNrOfItems);
 		gui.listSizeVal.setText("Combined size: " + getListSize());
+		gui.listPathVal.setText("Current directory: " + currentPath);
 	}
 	
 	public String getListSize()
