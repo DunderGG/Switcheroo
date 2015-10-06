@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="res"/>
 	<classpathentry kind="lib" path="E:/Program/Git/repository/Switcheroo/Switcheroo_Wallpaper/jna-master/dist/jna.jar"/>
 	<classpathentry kind="lib" path="E:/Program/Git/repository/Switcheroo/Switcheroo_Wallpaper/jna-master/dist/jna-platform.jar"/>
 	<classpathentry kind="lib" path="E:/Program/Git/repository/Switcheroo/Switcheroo_Wallpaper/imgscalr-lib-4.2/imgscalr-lib-4.2.jar" sourcepath="F:/Dropbox/workspace/Switcheroo_Wallpaper/imgscalr-lib-4.2/imgscalr-lib-4.2-sources.jar">
