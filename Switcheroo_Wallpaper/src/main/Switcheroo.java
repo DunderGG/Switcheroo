@@ -1,6 +1,5 @@
 package main;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -35,12 +34,7 @@ public class Switcheroo
 			try
 			{
 				BufferedImage img = ImageIO.read(f);
-				
-				//http://stackoverflow.com/questions/2290336/converting-png-into-jpeg
-				BufferedImage newImage = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_RGB);
-				newImage.createGraphics().drawImage(img, 0, 0, Color.BLACK, null);
-				
-				ImageIO.write(newImage, "jpg", f = new File("transcoded.jpg"));
+				ImageIO.write(img, "jpg", f = new File("transcoded.jpg"));
 				System.out.println("Wallpaper converted to: " + f.getAbsolutePath());
 			} 
 			catch (IOException e)

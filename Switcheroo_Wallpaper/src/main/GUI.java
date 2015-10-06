@@ -1,6 +1,5 @@
 package main;
 
-import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -11,12 +10,6 @@ import java.awt.FontFormatException;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
-import java.awt.SystemTray;
-import java.awt.Toolkit;
-import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -84,62 +77,6 @@ public class GUI extends JFrame
 		super("SWITCHEROO");
 
 		LOGGER.info("ENTERED FUNCTION GUI()");
-		
-		java.net.URL iconURL = ClassLoader.getSystemResource("res/trayimage2.jpg");
-		Image img = new ImageIcon(iconURL).getImage();
-		//Image img2 = Toolkit.getDefaultToolkit().createImage(iconURL);
-		setIconImage(img);
-		
-		/*
-		 * ADD AN ICON FOR THE SYSTEM TRAY
-		 */
-		TrayIcon trayIcon = null;
-		if(!SystemTray.isSupported())
-	        System.out.println("System tray is not supported! ");
-		else
-		{
-			System.out.println("System tray is supported! ");
-			
-			SystemTray tray = SystemTray.getSystemTray();
-			
-			//Create the menu itself.
-			PopupMenu trayPopup = new PopupMenu();
-			
-			//1st entry in the popup menu
-			MenuItem change = new MenuItem("Change");
-			change.addActionListener(new ActionListener(){
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					System.out.println("Changing wallpaper, random");
-				}
-				
-			});
-			trayPopup.add(change);
-			
-			//2nd entry in the popup menu
-			MenuItem close = new MenuItem("Close");
-			close.addActionListener(new ActionListener(){
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					System.out.println("Closing");
-					System.exit(0);
-				}
-			});
-			trayPopup.add(close);
-			
-			trayIcon = new TrayIcon(img, "Switcheroo", trayPopup);
-			trayIcon.setImageAutoSize(true);
-			
-			try
-			{
-				tray.add(trayIcon);
-			} catch (AWTException e1)
-			{
-				e1.printStackTrace();
-			}
-		}
 		
 		contentPane.setBackground(Color.BLACK);	
 		
@@ -293,13 +230,11 @@ public class GUI extends JFrame
 						
 						LOGGER.info("Selected value: " + FileList.fileList.getSelectedValue() + "\n");
 						int index = FileList.fileList.getSelectedIndex();
-						if(index != -1)
-						{
-							FileList.fileList.getModel().getElementAt(index).isFavorite = true;
-							//FileList.updateListFavorites();
-							System.out.println("Wallpaper set to favorite? " + FileList.fileList.getModel().getElementAt(index).isFavorite);
-							imgIsFavorite.setText("Favorite: Yes");
-						}
+						
+						FileList.fileList.getModel().getElementAt(index).isFavorite = true;
+						//FileList.updateListFavorites();
+						System.out.println("Wallpaper set to favorite? " + FileList.fileList.getModel().getElementAt(index).isFavorite);
+						imgIsFavorite.setText("Favorite: Yes");
 					}
 				});
 		//END OF BUTTONS
