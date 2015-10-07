@@ -14,13 +14,11 @@ public class Wallpaper extends File
 
 	private final static Logger LOGGER = Logger.getLogger(Wallpaper.class.getName());
 	
-	
 	String path;
 	
 	UUID wall_id = UUID.randomUUID();
 	
 	public boolean isFavorite = false;
-	public String helloWorld = "HellO!"; 
 	
 	public Wallpaper(String filePath)
 	{
@@ -42,9 +40,6 @@ public class Wallpaper extends File
 		
 		return path;
 	}
-	
-	
-
 	
 }//END OF CLASS Wallpaper
 

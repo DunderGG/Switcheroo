@@ -22,8 +22,8 @@ public class Switcheroo
 	
 	public Switcheroo(File f)
 	{
-		LOGGER.info("ENTERED FUNCTION Switcheroo()");
-		LOGGER.info("Switching to wallpaper: " + f.getAbsolutePath());
+		LOGGER.info("ENTERED FUNCTION Switcheroo()\n");
+		LOGGER.info("Switching to wallpaper: " + f.getAbsolutePath() + "\n");
 		
 		//Apparently only jpg works, so if it's not a jpg, we must convert it.
 		//At the end we delete the new file.

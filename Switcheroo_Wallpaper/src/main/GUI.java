@@ -8,6 +8,7 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -19,9 +20,16 @@ import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
@@ -82,9 +90,8 @@ public class GUI extends JFrame
 	public GUI()
 	{	
 		super("SWITCHEROO");
-
-		LOGGER.info("ENTERED FUNCTION GUI()");
 		
+
 		java.net.URL iconURL = ClassLoader.getSystemResource("res/trayimage2.jpg");
 		Image img = new ImageIcon(iconURL).getImage();
 		//Image img2 = Toolkit.getDefaultToolkit().createImage(iconURL);
@@ -124,6 +131,7 @@ public class GUI extends JFrame
 				public void actionPerformed(ActionEvent e)
 				{
 					System.out.println("Closing");
+					
 					System.exit(0);
 				}
 			});
@@ -131,6 +139,8 @@ public class GUI extends JFrame
 			
 			trayIcon = new TrayIcon(img, "Switcheroo", trayPopup);
 			trayIcon.setImageAutoSize(true);
+			
+			trayIcon.addMouseListener(getMouseListener(this));
 			
 			try
 			{
@@ -151,8 +161,9 @@ public class GUI extends JFrame
 		/*
 		 * BUTTON1
 		 */
+		Font font = getFont("HURTM___.otf", 25f);
 		button1 = new JButton("Choose folder");
-		button1.setFont(getFont("HURTM___.otf", 25f));
+		button1.setFont(font);
 		optionsPanel.add(button1);
 		button1.addActionListener(
 				new ActionListener()
@@ -169,13 +180,13 @@ public class GUI extends JFrame
 					    int returnVal = chooser.showOpenDialog(contentPane);					    
 					    if(returnVal == JFileChooser.APPROVE_OPTION) 
 					    {
-					    	//Save the previous value of "currentDir"
+					    	//Save the previous value of "currentDir", the folder we were in before changing.
 					    	String previousDir = newDir;
 
 					    	//Assign "currentDir" the new value
 					    	/*
 					    	 * getSelectedFile() returns the selected folder (despite its name),
-					    	 * getCurrentDirectory() returns the folder of the selected folder, the parent folder (so don't use this one for the job)
+					    	 * getCurrentDirectory() returns the folder of the selected folder, i.e. the parent folder (so don't use this one for the job)
 					    	 */					    	
 					    	newDir = chooser.getSelectedFile().toString();
 					    	LOGGER.info("\n" + "Previous folder: " + previousDir + "\n" + "New folder: " + newDir + "\n");
@@ -183,7 +194,7 @@ public class GUI extends JFrame
 					    	//If the same folder is chosen, do nothing
 					    	if(newDir.equals(previousDir))
 					    	{
-					    		
+					    		System.out.println("Same folder was chosen");
 					    	}					    	
 					    	//If another folder was chosen, ask if the list should be updated
 					    	else
@@ -200,7 +211,7 @@ public class GUI extends JFrame
 						    		if(n == JOptionPane.YES_OPTION)
 						    		{
 						    			//User wants to update the list from new folder
-						    			LOGGER.info("Updating list from folder: " + newDir);
+						    			LOGGER.info("Updating list from folder: " + newDir + "\n");
 						    			//If the chosen folder exists
 								    	if(newDir.toString() != null)
 								    	{								    										    	
@@ -209,7 +220,11 @@ public class GUI extends JFrame
 								    	}
 								    	else
 								    		System.out.println("Folder did not exist");
-						    			
+						    		}
+						    		else if(n == JOptionPane.NO_OPTION)
+						    		{
+						    			//User does not want to update the list
+						    			newDir = previousDir;
 						    		}
 						    	}
 					    		else
@@ -222,11 +237,11 @@ public class GUI extends JFrame
 					    }
 					    else if(returnVal == JFileChooser.CANCEL_OPTION)
 					    {
-					    	LOGGER.info("User cancelled" + "\n");
+					    	LOGGER.info("User cancelled\n");
 					    }
 					    else
 					    {
-					    	LOGGER.info("Unknown error with opening folder");
+					    	LOGGER.info("Unknown error with opening folder\n");
 					    }
 					}
 				});		
@@ -235,7 +250,7 @@ public class GUI extends JFrame
 		 * BUTTON2
 		 */
 		button2 = new JButton("Set File");
-		button2.setFont(getFont("HURTM___.otf", 25f));
+		button2.setFont(font);
 		optionsPanel.add(button2);
 		button2.addActionListener(
 				new ActionListener()
@@ -253,7 +268,7 @@ public class GUI extends JFrame
 		 * BUTTON3
 		 */
 		button3 = new JButton("Open in viewer");
-		button3.setFont(getFont("HURTM___.otf", 25f));
+		button3.setFont(font);
 		optionsPanel.add(button3);
 		button3.addActionListener(
 				new ActionListener()
@@ -281,7 +296,7 @@ public class GUI extends JFrame
 		 * BUTTON4
 		 */
 		button4 = new JButton("Set favorite");
-		button4.setFont(getFont("HURTM___.otf", 25f));
+		button4.setFont(font);
 		optionsPanel.add(button4);
 		button4.addActionListener(
 				new ActionListener()
@@ -312,7 +327,7 @@ public class GUI extends JFrame
 		scroll = fl.getScrollPane(this);
 		contentPane.add(scroll, BorderLayout.LINE_START);
 		newDir = fl.wallFolder.getPath();
-		LOGGER.info("Starting point of newDir = " + newDir);
+		LOGGER.info("Starting point of newDir = " + newDir + "\n");
 
 		/*
 		 * START OF imageContainer
@@ -344,13 +359,23 @@ public class GUI extends JFrame
 		JPanel panel1 = new JPanel();
 		panel1.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
 		lblListSize = new JLabel("Image information");
-		lblListSize.setFont(getFont("HURTM___.otf", 25f));
+		lblListSize.setFont(font);
 		panel1.add(lblListSize);
 		c.gridy = 0;
 		c.gridx = 0;
 		c.weighty=0;
 		c.anchor = GridBagConstraints.PAGE_START;
 		dataContainer.add(panel1, c);
+		
+		JPanel panel2 = new JPanel();
+		panel2.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
+		lblListInfo = new JLabel("List information");
+		lblListInfo.setFont(font);
+		panel2.add(lblListInfo);
+		c.gridy = 2;
+		c.gridx = 0;
+		c.weighty=0;
+		dataContainer.add(panel2, c);
 		
 		/*
 		 *START OF imageDataContainer 
@@ -360,25 +385,27 @@ public class GUI extends JFrame
 		//imageDataContainer.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		imageDataHandler imgDataHandler = new imageDataHandler(previewFile, this);
 		
+		font = getFont("TitilliumWeb-Light.ttf", 16f);
+		
 		//Name of the image
 		imgNameVal = new JTextArea("Name: " + imgDataHandler.name);
-		imgNameVal.setFont(getFont("TitilliumWeb-Light.ttf", 16f));
+		imgNameVal.setFont(font);
 		imgNameVal.setLineWrap(true);
 		imageDataContainer.add(imgNameVal);
 		
 		//Resolution of the image
 		imgResVal = new JTextArea("Resolution: " + imgDataHandler.resolution);
-		imgResVal.setFont(getFont("TitilliumWeb-Light.ttf", 16f));
+		imgResVal.setFont(font);
 		imageDataContainer.add(imgResVal);
 		
 		//Aspect ratio of the image
 		imgRatioVal = new JTextArea("Aspect ratio: " + imgDataHandler.aspectRatio);
-		imgRatioVal.setFont(getFont("TitilliumWeb-Light.ttf", 16f));
+		imgRatioVal.setFont(font);
 		imageDataContainer.add(imgRatioVal);
 		
 		//Is the image a favorite?
 		imgIsFavorite = new JTextArea("Favorite: No");
-		imgIsFavorite.setFont(getFont("TitilliumWeb-Light.ttf", 16f));
+		imgIsFavorite.setFont(font);
 		imageDataContainer.add(imgIsFavorite);
 		
 		c.gridy = 1;
@@ -387,16 +414,6 @@ public class GUI extends JFrame
 		dataContainer.add(imageDataContainer, c);
 		//END OF imageDataContainer
 		
-		JPanel panel2 = new JPanel();
-		panel2.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
-		lblListInfo = new JLabel("List information");
-		lblListInfo.setFont(getFont("HURTM___.otf", 25f));
-		panel2.add(lblListInfo);
-		c.gridy = 2;
-		c.gridx = 0;
-		c.weighty=0;
-		dataContainer.add(panel2, c);
-		
 		/*
 		 * START OF listDataContainer
 		 */
@@ -404,17 +421,17 @@ public class GUI extends JFrame
 		
 		//Nr of files in list
 		listNrVal = new JTextArea("Nr. of files: " + fl.listNrOfItems);
-		listNrVal.setFont(getFont("TitilliumWeb-Light.ttf", 16f));
+		listNrVal.setFont(font);
 		listDataContainer.add(listNrVal);
 		
 		//Size of all files in list
 		listSizeVal = new JTextArea("Combined size: " + fl.listTotalSize);
-		listSizeVal.setFont(getFont("TitilliumWeb-Light.ttf", 16f));
+		listSizeVal.setFont(font);
 		listDataContainer.add(listSizeVal);
 		
 		//Current working directory
 		listPathVal = new JTextArea("Current directory: " + fl.currentPath);
-		listPathVal.setFont(getFont("TitilliumWeb-Light.ttf", 16f));
+		listPathVal.setFont(font);
 		listDataContainer.add(listPathVal);
 		
 		c.gridy = 3;
@@ -426,7 +443,8 @@ public class GUI extends JFrame
 		/*
 		 * HANDLING THE WINDOW
 		 */
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.addWindowListener(getWindowListener(this));
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setResizable(false);
 		setVisible(true);
 		setSize(1200,800);
@@ -450,21 +468,95 @@ public class GUI extends JFrame
 		/*
 		 * Printing out sizes
 		 */
-		System.out.print("Component:\tcontentPane\toptionsPane\tscroll\t\timageLabel\n");
-		System.out.print("Width: \t\t" + contentPane.getSize().width + "\t\t" + optionsPanel.getSize().width + "\t\t" + scroll.getSize().width + "\t\t" + imageLabel.getSize().width + "\n");
-		System.out.print("Height: \t" + contentPane.getSize().height + "\t\t" + optionsPanel.getSize().height + "\t\t" + scroll.getSize().height + "\t\t" + imageLabel.getSize().height + "\n");
+		//System.out.print("Component:\tcontentPane\toptionsPane\tscroll\t\timageLabel\n");
+		//System.out.print("Width: \t\t" + contentPane.getSize().width + "\t\t" + optionsPanel.getSize().width + "\t\t" + scroll.getSize().width + "\t\t" + imageLabel.getSize().width + "\n");
+		//System.out.print("Height: \t" + contentPane.getSize().height + "\t\t" + optionsPanel.getSize().height + "\t\t" + scroll.getSize().height + "\t\t" + imageLabel.getSize().height + "\n");
 		
 		
+	}
+
+	private MouseListener getMouseListener(final Frame theFrame)
+	{
+		MouseListener ML = new MouseListener()
+		{
+			@Override
+			public void mouseClicked(MouseEvent arg0)
+			{}
+			@Override
+			public void mouseEntered(MouseEvent arg0)
+			{}
+			@Override
+			public void mouseExited(MouseEvent arg0)
+			{}
+			@Override
+			public void mouseReleased(MouseEvent arg0)
+			{}
+			
+			@Override
+			public void mousePressed(MouseEvent e)
+			{
+				if(e.getClickCount() >= 2)
+				{
+					theFrame.setVisible(true);
+				}
+			}
+		};
+		return ML;
+	}
+
+	private WindowListener getWindowListener(final Frame theFrame)
+	{
+		WindowListener WL = new WindowListener(){
+
+			@Override
+			public void windowOpened(WindowEvent e)
+			{
+			}
+			@Override
+			public void windowIconified(WindowEvent e)
+			{
+			}			
+			@Override
+			public void windowDeiconified(WindowEvent e)
+			{
+			}			
+			@Override
+			public void windowDeactivated(WindowEvent e)
+			{
+			}	
+			@Override
+			public void windowClosed(WindowEvent e)
+			{
+			}
+			@Override
+			public void windowActivated(WindowEvent e)
+			{
+			}
+			
+			@Override
+			public void windowClosing(WindowEvent e)
+			{
+				theFrame.setVisible(false);
+			}
+		};
+		return WL;
 	}
 
 	public Font getFont(String fontName, float fontSize)
 	{
 		Font font = null;
+		java.net.URL fontURL = ClassLoader.getSystemResource("res/" + fontName);
 		try 
 		{
-			font = Font.createFont(Font.TRUETYPE_FONT, new File("res/"+fontName));
+			InputStream fontStream = new BufferedInputStream(new FileInputStream(fontURL.getPath().toString()));
+			font = Font.createFont(Font.TRUETYPE_FONT, fontStream);
 		} //If it fails, just return the default font
-		catch (IOException|FontFormatException e) {return new JLabel().getFont();}
+		catch (IOException|FontFormatException e) 
+		{
+			System.out.println(e.toString());
+			LOGGER.info("Failed to get font: " + "res/" + fontName + "\n");
+			return new JLabel().getFont();
+		}
 		
 		return font.deriveFont(fontSize);
 	}
@@ -503,7 +595,5 @@ public class GUI extends JFrame
 		
 		return new Dimension(image.getWidth(), image.getHeight());
 	}
-	
 
-	
 }
