@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
@@ -20,7 +21,10 @@ public class FileList
 	public static JList<Wallpaper> fileList;
 	
 	public File wallFolder;
+	//Contains the currently showing wallpapers (changes every time the folder changes)
 	public static Wallpaper[] wallArray;
+	//Contains the current favorites (does not change when folder changes)
+	public static ArrayList<Wallpaper> favArray = new ArrayList<Wallpaper>();
 	
 	public String listTotalSize;
 	public String listNrOfItems;
@@ -44,7 +48,7 @@ public class FileList
 		currentPath = System.getProperty("user.home")+"\\Pictures";
 		wallFolder = new File(currentPath);
 				
-		final String[] nameArray = wallFolder.list(new TextFileFilter2());
+		final String[] nameArray = wallFolder.list(new TextFileFilter());
 		
 		//Create the Wallpaper array and set its size to the same as the number of files in the wallFolder
 		wallArray = new Wallpaper[nameArray.length];
@@ -82,7 +86,7 @@ public class FileList
 	
 	public void updateListData(Wallpaper wallFile)
 	{
-		final String[] nameArray = wallFile.list(new TextFileFilter2());
+		final String[] nameArray = wallFile.list(new TextFileFilter());
 		wallArray = new Wallpaper[nameArray.length];
 		for(int i = 0; i<nameArray.length; i++)
 			wallArray[i] = new Wallpaper(new File(wallFile, nameArray[i]).getAbsolutePath());
@@ -140,12 +144,19 @@ public class FileList
 		
 		return df.format(size) + " " + prefix + "B";
 	}
+
+	public static void makeFavorite() 
+	{
+		favArray.add(fileList.getModel().getElementAt(fileList.getSelectedIndex()));
+	}
+	public static Boolean isFavorite(Wallpaper f)
+	{
+		return favArray.contains(f);
+	}
 }
 
 class FileRenderer extends DefaultListCellRenderer
 {
-	private static final long serialVersionUID = 1L;
-
 	public FileRenderer()
 	{
 		setOpaque(true);
@@ -153,8 +164,7 @@ class FileRenderer extends DefaultListCellRenderer
 	
 	@Override
 	public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus)
-	{
-		
+	{	/*
 		for(Wallpaper wall : FileList.wallArray)
 		{
 			if(value.equals(wall.getPath()))
@@ -163,7 +173,7 @@ class FileRenderer extends DefaultListCellRenderer
 					setBackground(Color.GREEN);
 			}
 		}
-		
+		*/
 		Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 		
 		File f = (File) value;
@@ -171,55 +181,22 @@ class FileRenderer extends DefaultListCellRenderer
 		JLabel l = (JLabel) c;
 		l.setText(f.getName());
 		l.setIcon(FileSystemView.getFileSystemView().getSystemIcon(f));
-		
 		return l;
 	}
-	
-	
 }
 
-class TextFileFilter implements FileFilter
+class TextFileFilter implements FilenameFilter
 {
 	public boolean accept(File file)
 	{
 		//Implement the logic to select files here
-		
 		String fileName = file.getName();
-		
 		return fileName.endsWith(".png") || fileName.endsWith(".jpg");
 	}
-}
-
-class TextFileFilter2 implements FilenameFilter
-{
-	public boolean accept(File file)
-	{
-		//Implement the logic to select files here
-		
-		String fileName = file.getName();
-		
-		return fileName.endsWith(".png") || fileName.endsWith(".jpg");
-	}
-
 	@Override
 	public boolean accept(File dir, String name)
 	{
 		return name.endsWith(".png") || name.endsWith(".jpg");
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

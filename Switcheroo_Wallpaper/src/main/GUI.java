@@ -57,6 +57,8 @@ public class GUI extends JFrame
 
 	private final static Logger LOGGER = Logger.getLogger(GUI.class.getName());
 	
+	private imageDataHandler imgDataHandler;
+	
 	public ImageIcon wallPreview;
 	FileList fl = new FileList(this);
 	
@@ -310,9 +312,8 @@ public class GUI extends JFrame
 						int index = FileList.fileList.getSelectedIndex();
 						if(index != -1)
 						{
-							FileList.fileList.getModel().getElementAt(index).isFavorite = true;
-							//FileList.updateListFavorites();
-							System.out.println("Wallpaper set to favorite? " + FileList.fileList.getModel().getElementAt(index).isFavorite);
+							FileList.makeFavorite();
+							
 							imgIsFavorite.setText("Favorite: Yes");
 						}
 					}
@@ -383,7 +384,7 @@ public class GUI extends JFrame
 		JPanel imageDataContainer = new JPanel(new GridLayout(0,1));		
 		//imageDataContainer.setPreferredSize(new Dimension(200, contentPane.getHeight()));
 		//imageDataContainer.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-		imageDataHandler imgDataHandler = new imageDataHandler(previewFile, this);
+		imgDataHandler = new imageDataHandler(previewFile, this);
 		
 		font = getFont("TitilliumWeb-Light.ttf", 16f);
 		
@@ -594,6 +595,21 @@ public class GUI extends JFrame
 		}
 		
 		return new Dimension(image.getWidth(), image.getHeight());
+	}
+	
+	/*
+	 * Update the JTextFields in the imageDataContainer in the GUI
+	 */
+	public void updateDataContainer(Wallpaper f)
+	{
+		this.imgNameVal.setText("Name: " + f.getName());
+
+		this.imgResVal.setText("Resolution: " + this.imgDataHandler.getResolution(f));
+
+		this.imgRatioVal.setText("Aspect ratio: " + this.imgDataHandler.getAspect(f));
+		
+		this.imgIsFavorite.setText("Favorite: " + (FileList.isFavorite(f)? "Yes" : "No"));
+
 	}
 
 }

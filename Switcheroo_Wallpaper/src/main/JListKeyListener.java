@@ -4,7 +4,11 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JList;
-
+/*
+ * Handles all the keyboard interaction with the wallpaper list.
+ * Enter sets the wallpaper, up and down arrow keys changes the preview
+ * 
+ */
 public class JListKeyListener extends KeyAdapter
 {
 	JList<Wallpaper> jListOfWalls = FileList.fileList;
@@ -50,7 +54,7 @@ public class JListKeyListener extends KeyAdapter
 		
 		//Change the preview to the selected File
 		gui.changePreview(clickedFile);
-		imageDataHandler.updateDataContainer(clickedFile);
+		gui.updateDataContainer(clickedFile);
 	}
 
 }//END OF CLASS JListKeyListener

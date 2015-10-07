@@ -7,7 +7,11 @@ import java.util.logging.Logger;
 
 import javax.swing.JList;
 
-
+/*
+ * Handles all the mouse interaction with the wallpaper list.
+ * Double-click sets the wallpaper, single-click changes the preview.
+ * 
+*/
 public class JListMouseListener extends MouseAdapter
 {
 	private final static Logger LOGGER = Logger.getLogger(JListMouseListener.class.getName());
@@ -32,6 +36,9 @@ public class JListMouseListener extends MouseAdapter
 	@Override
 	public void mousePressed(MouseEvent e)
 	{	
+		if(e.getButton() != MouseEvent.BUTTON1)
+			return;
+		
 		Rectangle bounds = jListOfWalls.getCellBounds(0, jListOfWalls.getModel().getSize() - 1);
 		if(bounds != null)
 		{
@@ -42,7 +49,7 @@ public class JListMouseListener extends MouseAdapter
 				else
 					return;
 				
-				imageDataHandler.updateDataContainer(clickedFile);
+				gui.updateDataContainer(clickedFile);
 			}
 			else
 			{
@@ -56,7 +63,8 @@ public class JListMouseListener extends MouseAdapter
 	@Override
 	public void mouseReleased(MouseEvent e)
 	{		
-		
+		if(e.getButton() != MouseEvent.BUTTON1)
+			return;
 		Rectangle bounds = jListOfWalls.getCellBounds(0, jListOfWalls.getModel().getSize() - 1);
 		
 		if(bounds != null)

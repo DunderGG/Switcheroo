@@ -7,6 +7,12 @@ import java.math.BigInteger;
 
 import javax.imageio.ImageIO;
 
+/*
+ * Contains helper-functions for wallpaper data, 
+ * such as getting size or aspect ratio,
+ * and updating the data fields in the GUI.
+ * 
+ */
 public class imageDataHandler
 {	
 	static File currentFile = null;
@@ -29,28 +35,8 @@ public class imageDataHandler
 		
 		this.gui = gui;
 	}
-	
-	/*
-	 * Update the JTextFields in the imageDataContainer in GUI
-	 */
-	public static void updateDataContainer(Wallpaper f)
-	{
-		gui.imgNameVal.setText("Name: " + f.getName());
 
-		gui.imgResVal.setText("Resolution: " + getResolution(f));
-
-		gui.imgRatioVal.setText("Aspect ratio: " + getAspect(f));
-		
-		gui.imgIsFavorite.setText("Favorite: " + getIsFavorite());
-
-	}
-
-	private static String getIsFavorite()
-	{
-		return FileList.fileList.getModel().getElementAt(FileList.fileList.getSelectedIndex()).isFavorite ? "Yes" : "No";
-	}
-
-	private static String getName(Wallpaper f)
+	public static String getName(Wallpaper f)
 	{
 		if(f == null)
 			return "No file selected";
@@ -61,7 +47,7 @@ public class imageDataHandler
 	/*
 	 * Returns a formatted String with the File's resolution
 	 */
-	private static String getResolution(Wallpaper f)
+	public static String getResolution(Wallpaper f)
 	{
 		if(f == null)
 			return "No file selected";
@@ -82,7 +68,7 @@ public class imageDataHandler
 	/*
 	 * Returns a formatted String with the File's aspect ratio
 	 */
-	private static String getAspect(Wallpaper f)
+	public static String getAspect(Wallpaper f)
 	{
 		if(f == null)
 			return "No file selected";
